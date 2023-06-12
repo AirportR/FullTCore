@@ -1,4 +1,4 @@
-module myclash
+module github.com/AirportR/FullTCore
 
 go 1.19
 
