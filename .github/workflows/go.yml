@@ -4,8 +4,8 @@
 name: Go
 
 on:
-  pull_request:
-    branches: [ "master" ]
+  push:
+    branches: [ "main" ]
 jobs:
   build:
     name: Build
