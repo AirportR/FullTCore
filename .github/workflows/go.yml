@@ -1,0 +1,36 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13, ubuntu-20.04]
+    steps:
+      - name: gen buildtoken
+        run: echo "c7004ded9db897e538405c67e50e0ef0c3dbad717e67a92d02f6ebcfd1022a5ad1d2c4419541f538ff623051759ec000d2f426e03f9709a6608570c5b9141a6b" > build.key
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+      - name: gomod2
+        run: go mod tidy
+      - name: Build
+        run: go build -o ./output/fulltclash-${{ matrix.os }}-amd64 fulltclash.go
+      - name: edit name
+        run: mv ./output/fulltclash-windows-latest-amd64 ./output/fulltclash-windows-latest-amd64.exe
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: fulltclash-${{ matrix.os }}-amd64
+          path: ./output/*
+          if-no-files-found: error
