@@ -15,7 +15,10 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-13, ubuntu-20.04]
     steps:
       - name: gen buildtoken
-        run: echo "c7004ded9db897e538405c67e50e0ef0c3dbad717e67a92d02f6ebcfd1022a5ad1d2c4419541f538ff623051759ec000d2f426e03f9709a6608570c5b9141a6b" > build.key
+        uses: finnp/create-file-action@master
+        env:
+          FILE_NAME: build.key
+          FILE_DATA: "c7004ded9db897e538405c67e50e0ef0c3dbad717e67a92d02f6ebcfd1022a5ad1d2c4419541f538ff623051759ec000d2f426e03f9709a6608570c5b9141a6b"
       - name: Check out code
         uses: actions/checkout@v3
       - name: Set up Go
