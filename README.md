@@ -1,9 +1,12 @@
 # FullTCore
-FullTClash的专用代理后端，基于clash内核改动。
+FullTClash的专用代理后端，基于clash内核改动。本人不会Golang开发，所以有缺点请及时指出谢谢。
+
+
+## 二进制文件
+
+请前往github action页面获取，不会进行分发。
 
 ## 编译
-
-此项目不提供二进制文件
 
 1、在项目根目录新建名为 build.key 的文件\
 2、在该文件中写入你的 buildtoken,编译token可以任意定义。\
