@@ -25,6 +25,7 @@ jobs:
       - name: Build
         run: go build -ldflags="-s -w" -o ./output/fulltclash-${{ matrix.os }}-amd64 fulltclash.go
       - name: edit name
+        if: runner.os == 'Windows'
         run: mv ./output/fulltclash-windows-latest-amd64 ./output/fulltclash-windows-amd64.exe
       - name: Upload artifact
         uses: actions/upload-artifact@v2
