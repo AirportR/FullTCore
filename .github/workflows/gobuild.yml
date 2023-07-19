@@ -37,5 +37,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: fulltclash-windows-amd64.exe
-          path: ./output/fulltclash-windows-amd64.exe
+          path: ./output/*
           if-no-files-found: error
