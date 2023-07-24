@@ -427,6 +427,11 @@ func handleTCPConn(connCtx constant.ConnContext, index int) {
 	proxy, err := adapter.ParseProxy(rawcfgs[index].Proxy)
 	if err != nil {
 		fmt.Printf("error: %s \n", err.Error())
+		return
+	}
+	if proxy == nil {
+		fmt.Println("Null pointer reference. Connection break down!")
+		return
 	}
 	fmt.Printf("request incoming from %s to %s, using %s , index: %d\n", metadata.SourceAddress(), metadata.RemoteAddress(), proxy.Name(), index)
 	ctx, cancel := context.WithTimeout(context.Background(), constant.DefaultTCPTimeout)
