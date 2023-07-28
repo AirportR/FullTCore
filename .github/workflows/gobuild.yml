@@ -6,6 +6,9 @@ name: Go
 on:
   push:
     branches: ["meta"]
+    paths-ignore:
+      - "build.key"
+      - "README.md"
 jobs:
   build:
     name: Build
