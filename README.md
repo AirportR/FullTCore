@@ -1,7 +1,9 @@
 # FullTCore
 FullTClash的专用代理后端，基于clash内核改动。本人不会Golang开发，所以有缺点请及时指出谢谢。
 
-
+## 分支
+* 当前为origin分支，使用Clash 原生内核为上游，偏向稳定。
+* 此外还有[meta分支](https://github.com/AirportR/FullTCore/tree/meta)，使用Clash.Meta 代替，支持更多代理协议。
 ## 二进制文件
 
 请前往github action页面获取，不会进行分发。
@@ -12,9 +14,12 @@ FullTClash的专用代理后端，基于clash内核改动。本人不会Golang�
 2、在该文件中写入你的 buildtoken,编译token可以任意定义。\
 3、执行命令:
 ```shell
-go build fulltclash.go
+go build -ldflags="-s -w" fulltclash.go
 ```
-
+提供 gvisor TUN栈支持（wireguard协议要用到）:
+```shell
+go build -tags with_gvisor -ldflags="-s -w" fulltclash.go
+```
 ## 特性
 
 没有新的特性，把上游项目 Clash的拿来改改了，使之与FullTClash契合。
@@ -26,3 +31,8 @@ go build fulltclash.go
 ```shell
 fulltclash -h 
 ```
+
+## 致谢
+
+* [Clash](https://github.com/Dreamacro/clash)
+* [Clash.Meta](https://github.com/metacubex/clash.meta)
