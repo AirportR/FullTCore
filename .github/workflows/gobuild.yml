@@ -5,7 +5,7 @@ name: Go
 
 on:
   push:
-    branches: ["origin","meta"]
+    branches: ["meta"]
 jobs:
   build:
     name: Build
