@@ -16,10 +16,7 @@ FullTClash的专用代理后端，基于clash内核改动。本人不会Golang�
 ```shell
 go build -ldflags="-s -w" fulltclash.go
 ```
-提供 gvisor TUN栈支持（wireguard协议要用到）:
-```shell
-go build -tags with_gvisor -ldflags="-s -w" fulltclash.go
-```
+
 ## 特性
 
 没有新的特性，把上游项目 Clash的拿来改改了，使之与FullTClash契合。
