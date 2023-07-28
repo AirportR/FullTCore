@@ -23,7 +23,7 @@ jobs:
       - name: go-mod
         run: go mod tidy
       - name: Build
-        run: go build -ldflags="-s -w" -o ./output/fulltclash-meta-${{ matrix.os }}-amd64 fulltclash.go
+        run: go build -tags with_gvisor -ldflags="-s -w" -o ./output/fulltclash-meta-${{ matrix.os }}-amd64 fulltclash.go
       - name: edit name
         if: runner.os == 'Windows'
         run: mv ./output/fulltclash-meta-windows-latest-amd64 ./output/fulltclash-meta-windows-amd64.exe
