@@ -2,8 +2,8 @@
 FullTClash的专用代理后端，基于clash内核改动。本人不会Golang开发，所以有缺点请及时指出谢谢。
 
 ## 分支
-* 当前为origin分支，使用Clash 原生内核为上游，偏向稳定。
-* 此外还有[meta分支](https://github.com/AirportR/FullTCore/tree/meta)，使用Clash.Meta 代替，支持更多代理协议。
+* 当前为meta分支，支持更多代理协议。
+* 
 ## 二进制文件
 
 请前往github action页面获取，不会进行分发。
