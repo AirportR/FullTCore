@@ -42,7 +42,7 @@ require (
 	github.com/metacubex/gopacket v1.1.20-0.20230608035415-7e2f98a3e759 // indirect
 	github.com/metacubex/gvisor v0.0.0-20230611153922-78842f086475 // indirect
 	github.com/metacubex/quic-go v0.38.1-0.20230909013832-033f6a2115cf // indirect
-	github.com/metacubex/sing-quic v0.0.0-20230921083613-f4d3299bca83 // indirect
+	github.com/metacubex/sing-quic v0.0.0-20230921160948-82175eb07a81 // indirect
 	github.com/metacubex/sing-shadowsocks v0.2.5 // indirect
 	github.com/metacubex/sing-shadowsocks2 v0.1.4 // indirect
 	github.com/metacubex/sing-vmess v0.1.9-0.20230921005247-a0488d7dac74 // indirect
@@ -91,4 +91,4 @@ require (
 	lukechampine.com/blake3 v1.2.1 // indirect
 )
 
-replace github.com/Dreamacro/clash => github.com/MetaCubeX/Clash.Meta v1.11.9-0.20230921092515-f6bf9c085770
+replace github.com/Dreamacro/clash => github.com/MetaCubeX/Clash.Meta v1.11.9-0.20230922064534-d48f9c2a6cc9
