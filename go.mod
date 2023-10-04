@@ -91,4 +91,4 @@ require (
 	lukechampine.com/blake3 v1.2.1 // indirect
 )
 
-replace github.com/Dreamacro/clash => github.com/MetaCubeX/Clash.Meta v1.11.9-0.20230922064534-d48f9c2a6cc9
+replace github.com/Dreamacro/clash => github.com/MetaCubeX/Clash.Meta v1.16.0

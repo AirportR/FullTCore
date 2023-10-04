@@ -18,7 +18,6 @@ import (
 	icontext "github.com/Dreamacro/clash/context"
 	"github.com/Dreamacro/clash/listener/mixed"
 	"github.com/Dreamacro/clash/listener/socks"
-	"github.com/Dreamacro/clash/tunnel/statistic"
 	"golang.org/x/crypto/chacha20poly1305"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -36,43 +35,43 @@ import (
 )
 
 var (
-	controlport string
-	proxyport   string
+	controlPort string
+	proxyPort   string
 )
 
 func init() {
-	flag.StringVar(&controlport, "c", "", "set control port\t设置控制端口")
-	flag.StringVar(&proxyport, "p", "", "set proxy port\t设置代理端口并开始监听，多个端口之间以|进行分隔")
+	flag.StringVar(&controlPort, "c", "", "set control port\t设置控制端口")
+	flag.StringVar(&proxyPort, "p", "", "set proxy port\t设置代理端口并开始监听，多个端口之间以|进行分隔")
 	flag.Parse()
 
 }
 func main() {
-	if controlport == "" {
+	if controlPort == "" {
 		fmt.Printf("Invalid control-port value")
 		return
 	}
-	if proxyport == "" {
+	if proxyPort == "" {
 		fmt.Printf("Invalid proxy-port value")
 		return
 	}
-	portslice := strings.Split(proxyport, "|")
-	pslicelen := len(portslice)
-	fmt.Println("接收到的端口数量:", pslicelen)
+	portSlice := strings.Split(proxyPort, "|")
+	portSliceLen := len(portSlice)
+	fmt.Println("接收到的端口数量:", portSliceLen)
 
-	if pslicelen < 1 {
+	if portSliceLen < 1 {
 		fmt.Printf("No proxy port available")
 		return
 	}
-	if pslicelen > 128 {
-		fmt.Printf("setProxy index must be range in 0~ 127, current index is %d\n", pslicelen)
+	if portSliceLen > 128 {
+		fmt.Printf("setProxy index must be range in 0~ 127, current index is %d\n", portSliceLen)
 		return
 	}
-	for _i, _port := range portslice {
+	for _i, _port := range portSlice {
 		_addr := "127.0.0.1:" + _port
-		go startclashMixed2(_addr, _i)
+		go startclashMixed(_addr, _i)
 	}
 
-	addr := "127.0.0.1:" + controlport
+	addr := "127.0.0.1:" + controlPort
 	sockcontrol(addr)
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
@@ -125,6 +124,7 @@ func sockcontrol(addr string) {
 		log.Fatal(err)
 	}
 	defer listener.Close()
+
 	fmt.Printf("已开始在 %s 进行socket监听\n", addr)
 	for {
 		// Accept a connection from a client
@@ -141,7 +141,7 @@ func sockcontrol(addr string) {
 func decryptData(encryptdata []byte) []byte {
 	aead, err := chacha20poly1305.New(sha25632bytes(BUILDTOKEN))
 	if err != nil {
-		log.Printf("error: %s", err.Error())
+		//log.Printf("error: %s", err.Error())
 	}
 	plaintext, err := aead.Open(nil, nonce, encryptdata, nil)
 	if err != nil {
@@ -169,7 +169,6 @@ func handleConnection(conn net.Conn) {
 	}
 	plaintext := decryptData(buf)
 	if plaintext == nil {
-		log.Printf("failed to decrypt data")
 		return
 	}
 	err = yaml.Unmarshal(plaintext, &tempconf)
@@ -224,11 +223,11 @@ func myURLTest(pingURL string, index int) uint16 {
 	return delay
 }
 
-func startclashMixed2(rawaddr string, index int) {
+func startclashMixed(rawaddr string, index int) {
 	addr := rawaddr
 	tcpQueue := make(chan constant.ConnContext, 256)
 	udpQueue := make(chan constant.PacketAdapter, 32)
-	mixedListener, mixedUDPLister := ReCreateMixed(addr, tcpQueue, udpQueue, index)
+	mixedListener, mixedUDPLister := CreateListenerMixed(addr, tcpQueue, udpQueue, index)
 	defer mixedListener.Close()
 	defer mixedUDPLister.Close()
 	if index == 0 {
@@ -252,7 +251,7 @@ func startclashMixed2(rawaddr string, index int) {
 		go handleTCPConn(conn2, index)
 	}
 }
-func ReCreateMixed(rawaddr string, tcpIn chan<- constant.ConnContext, udpIn chan<- constant.PacketAdapter, index int) (*mixed.Listener, *socks.UDPListener) {
+func CreateListenerMixed(rawaddr string, tcpIn chan<- constant.ConnContext, udpIn chan<- constant.PacketAdapter, index int) (*mixed.Listener, *socks.UDPListener) {
 	addr := rawaddr
 	mixedMux.Lock()
 	defer mixedMux.Unlock()
@@ -340,7 +339,16 @@ func handleUDPConn(packet *inbound.PacketAdapter, index int) {
 		}()
 
 		pCtx := icontext.NewPacketConnContext(metadata)
-		proxy, err := adapter.ParseProxy(rawcfgs[index].Proxy)
+		rawcfg := rawcfgs[index]
+		if rawcfg == nil {
+			fmt.Println("Null pointer reference. Connection break down!")
+			return
+		}
+		if rawcfg.Proxy == nil {
+			fmt.Println("Null pointer reference. Connection break down!")
+			return
+		}
+		proxy, err := adapter.ParseProxy(rawcfg.Proxy)
 		//proxy, rule, err := resolveMetadata(pCtx, metadata)
 		if err != nil {
 			fmt.Printf("[UDP] Parse metadata failed: %s", err.Error())
@@ -361,12 +369,12 @@ func handleUDPConn(packet *inbound.PacketAdapter, index int) {
 			return
 		}
 		pCtx.InjectPacketConn(rawPc)
-		pc := statistic.NewUDPTracker(rawPc, statistic.DefaultManager, metadata, nil, 0, 0, false)
+		//pc := statistic.NewUDPTracker(rawPc, statistic.DefaultManager, metadata, nil, 0, 0, false)
 
 		oAddr := metadata.DstIP.Unmap()
-		go handleUDPToLocal(packet.UDPPacket, pc, key, oAddr, fAddr)
+		go handleUDPToLocal(packet.UDPPacket, rawPc, key, oAddr, fAddr)
 
-		natTable.Set(key, pc, nil)
+		natTable.Set(key, rawPc, nil)
 		handle()
 	}()
 }
@@ -422,11 +430,16 @@ func handleUDPToRemote(packet constant.UDPPacket, pc constant.PacketConn, metada
 }
 func handleTCPConn(connCtx constant.ConnContext, index int) {
 	metadata := connCtx.Metadata()
-	if rawcfgs[index].Proxy == nil {
+	rawcfg := rawcfgs[index]
+	if rawcfg == nil {
 		fmt.Println("Null pointer reference. Connection break down!")
 		return
 	}
-	proxy, err := adapter.ParseProxy(rawcfgs[index].Proxy)
+	if rawcfg.Proxy == nil {
+		fmt.Println("Null pointer reference. Connection break down!")
+		return
+	}
+	proxy, err := adapter.ParseProxy(rawcfg.Proxy)
 	if err != nil {
 		fmt.Printf("error: %s \n", err.Error())
 		return
