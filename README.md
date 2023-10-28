@@ -6,7 +6,7 @@ FullTClash的专用代理后端，基于clash内核改动。本人不会Golang�
 * 此外还有[meta分支](https://github.com/AirportR/FullTCore/tree/meta)，使用Clash.Meta 代替，支持更多代理协议。
 ## 二进制文件
 
-请前往github action页面获取，不会进行分发。
+https://github.com/AirportR/FullTCore/releases
 
 ## 编译
 
