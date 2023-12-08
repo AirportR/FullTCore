@@ -360,7 +360,7 @@ func handleUDPConn(packet *inbound.PacketAdapter, index int) {
 		rawPc, err := proxy.ListenPacketContext(ctx, metadata.Pure())
 		if err != nil {
 			fmt.Printf(
-				"[UDP] dial %s %s --> %s error: %s",
+				"[UDP] dial %s %s --> %s error: %s\n",
 				proxy.Name(),
 				metadata.SourceAddress(),
 				metadata.RemoteAddress(),
@@ -454,7 +454,7 @@ func handleTCPConn(connCtx constant.ConnContext, index int) {
 	remoteConn, err := proxy.DialContext(ctx, metadata)
 	if err != nil {
 		fmt.Printf(
-			"[TCP] dial %s %s --> %s error: %s",
+			"[TCP] dial %s %s --> %s error: %s\n",
 			proxy.Name(),
 			metadata.SourceAddress(),
 			metadata.RemoteAddress(),
