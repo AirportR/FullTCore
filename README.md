@@ -1,5 +1,5 @@
 # FullTCore
-FullTClash的专用代理后端，基于clash内核改动。本人不会Golang开发，所以有缺点请及时指出谢谢。
+FullTClash的专用代理后端，基于Clash内核改动。本人不会Golang开发，所以有缺点请及时指出谢谢。
 
 ## 分支
 * 当前为meta分支，支持更多代理协议。

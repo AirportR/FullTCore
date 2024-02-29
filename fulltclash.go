@@ -72,7 +72,7 @@ func main() {
 	}
 
 	addr := "127.0.0.1:" + controlPort
-	sockcontrol(addr)
+	sockControl(addr)
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh
@@ -106,18 +106,14 @@ type RawConfig2 struct {
 }
 
 func sha25632bytes(data []byte) []byte {
-	// 创建一个 SHA256 对象
 	SHA256 := sha256.New()
-	// 将数据转换成二进制格式并传递给 update 方法
 	SHA256.Write(data)
-	// 调用 Sum 方法并转换成十六进制格式
 	digest := SHA256.Sum(nil)
 	hexDigest := hex.EncodeToString(digest)
-	// 截取前 32 个字符作为输出
 	output := hexDigest[:32]
 	return []byte(output)
 }
-func sockcontrol(addr string) {
+func sockControl(addr string) {
 	// Listen on a socket address
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -133,16 +129,20 @@ func sockcontrol(addr string) {
 			log.Println(err)
 			continue
 		}
-		fmt.Printf("data incoming from %s \n", conn.RemoteAddr())
+		//fmt.Printf("data incoming from %s \n", conn.RemoteAddr())
 		// Handle the connection in a goroutine
 		go handleConnection(conn)
 	}
 }
 func decryptData(encryptdata []byte) []byte {
+	if len(encryptdata) < 16 {
+		return nil
+	}
 	aead, err := chacha20poly1305.New(sha25632bytes(BUILDTOKEN))
 	if err != nil {
 		//log.Printf("error: %s", err.Error())
 	}
+
 	plaintext, err := aead.Open(nil, nonce, encryptdata, nil)
 	if err != nil {
 		log.Println(err)
@@ -448,7 +448,7 @@ func handleTCPConn(connCtx constant.ConnContext, index int) {
 		fmt.Println("Null pointer reference. Connection break down!")
 		return
 	}
-	fmt.Printf("request incoming from %s to %s, using %s , index: %d\n", metadata.SourceAddress(), metadata.RemoteAddress(), proxy.Name(), index)
+	//fmt.Printf("request incoming from %s to %s, using %s , index: %d\n", metadata.SourceAddress(), metadata.RemoteAddress(), proxy.Name(), index)
 	ctx, cancel := context.WithTimeout(context.Background(), constant.DefaultTCPTimeout)
 	defer cancel()
 	remoteConn, err := proxy.DialContext(ctx, metadata)
@@ -464,7 +464,6 @@ func handleTCPConn(connCtx constant.ConnContext, index int) {
 	}
 	defer remoteConn.Close()
 	N.Relay(connCtx.Conn(), remoteConn)
-	connCtx.Conn().Close()
 }
 
 func checkIndex(index int) bool {
@@ -485,5 +484,5 @@ func setProxy(tempconf *RawConfig2) {
 		}
 	}
 	rawcfgs[tempconf.Index] = &RawConfig{Proxy: tempconf.Proxy}
-	log.Printf("set proxy success! index: %d\n", tempconf.Index)
+	//log.Printf("set proxy success! index: %d\n", tempconf.Index)
 }
